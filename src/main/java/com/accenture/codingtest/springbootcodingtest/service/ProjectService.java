@@ -5,9 +5,14 @@ import com.accenture.codingtest.springbootcodingtest.model.ProjectDto;
 import com.accenture.codingtest.springbootcodingtest.repository.ProjectRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,8 +30,17 @@ public class ProjectService {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public List<ProjectDto> findAll() {
-        List<Project> projects = projectRepository.findAll();
+    public List<ProjectDto> findAll(String q, int pageIndex, int pageSize, String sortBy, String sortDirection) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        List<Sort.Order> orders = new ArrayList<Sort.Order>();
+        orders.add(new Sort.Order(direction, sortBy));
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(orders));
+        Page<Project> pageProjects;
+        if (q == null)
+            pageProjects = projectRepository.findAll(pageable);
+        else
+            pageProjects = projectRepository.findAllByNameContaining(q, pageable);
+        List<Project> projects = pageProjects.getContent();
         return projects.stream().map(projectEntity -> modelMapper.map(projectEntity, ProjectDto.class)).collect(Collectors.toList());
     }
 

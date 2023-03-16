@@ -22,9 +22,14 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectDto>> findAll() {
+    public ResponseEntity<List<ProjectDto>> findAll(
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "pageIndex", defaultValue = "0", required = false) int pageIndex,
+            @RequestParam(value = "pageSize", defaultValue = "3", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "ASC", required = false) String sortDirection) {
         try {
-            return new ResponseEntity<>(projectService.findAll(), HttpStatus.OK);
+            return new ResponseEntity<>(projectService.findAll(q, pageIndex, pageSize, sortBy, sortDirection), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

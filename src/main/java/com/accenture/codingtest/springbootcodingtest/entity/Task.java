@@ -2,10 +2,7 @@ package com.accenture.codingtest.springbootcodingtest.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
@@ -31,11 +28,13 @@ public class Task {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "project_id", nullable = false)
-    private UUID projectId;
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private User user;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name="project_id", nullable=false)
+    private Project project;
 
     public UUID getId() {
         return id;
@@ -69,19 +68,19 @@ public class Task {
         this.status = status;
     }
 
-    public UUID getProjectId() {
-        return projectId;
+    public User getUser() {
+        return user;
     }
 
-    public void setProjectId(UUID projectId) {
-        this.projectId = projectId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setProject(Project project) {
+        this.project = project;
     }
 }
